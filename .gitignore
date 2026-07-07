@@ -1,0 +1,4 @@
+# ignore data file
+*.csv
+# ignore macOs folder
+.DS_Store
