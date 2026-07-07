@@ -6,9 +6,6 @@
 #include "Crime.h"
 using namespace std;
 
-void insertArea(map<int, string> &mp, int id, string desc) {
-
-}
 int main() {
     // file spec variables
     string fileStr = "../resources/Crime_Data_from_2020_to_2024.csv";
