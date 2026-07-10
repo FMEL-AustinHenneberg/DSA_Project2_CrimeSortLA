@@ -5,7 +5,6 @@
 #ifndef DSA_PROJECT2_CRIMESORTLA_CRIME_H
 #define DSA_PROJECT2_CRIMESORTLA_CRIME_H
 
-#endif //DSA_PROJECT2_CRIMESORTLA_CRIME_H
 #include <vector>
 using namespace std;
 class Crime {
@@ -31,3 +30,5 @@ public:
         return this->records;
     }
 };
+
+#endif //DSA_PROJECT2_CRIMESORTLA_CRIME_H
