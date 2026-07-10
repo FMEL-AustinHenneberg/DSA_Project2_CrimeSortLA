@@ -53,6 +53,20 @@ vector<pair<int,int>> countByCrime(const vector<Crime::Record>& records) {
     return result;
 }
 
+vector<pair<int,int>> countByArea(const vector<Crime::Record>& records) {
+    unordered_map<int,int> counts;
+
+    for (const auto& r : records) {
+        counts[r.areaID]++;
+    }
+
+    vector<pair<int,int>> result;
+    for (const auto& p : counts) {
+        result.push_back(p);
+    }
+    return result;
+}
+
 #endif //DSA_PROJECT2_CRIMESORTLA_HEAPSORT_H
 
 
