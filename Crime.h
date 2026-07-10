@@ -27,4 +27,7 @@ public:
         Record rcd(r,a,c);
         records.push_back(rcd);
     };
+    vector<Record> getRecords() {
+        return this->records;
+    }
 };
