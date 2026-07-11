@@ -6,89 +6,65 @@
 #define DSA_PROJECT2_CRIMESORTLA_MERGESORT_H
 
 #include <vector>
-#include <map>
-#include <string>
 #include <utility>
 using namespace std;
 
-typedef pair<int, int> CrimeCount;
-
-// Gets the crime name
-string getCrimeName(int crimeID, const map<int, string>& crimeIDMap) {
-    auto it = crimeIDMap.find(crimeID);
-
-    if (it != crimeIDMap.end()) {
-        return it->second;
-    }
-    return "";
-}
-
-bool comesBefore(const CrimeCount& left, const CrimeCount& right,
-                 const map<int, string>& crimeIDMap, bool descending) {
-    if (left.second != right.second) {
-        if (descending) {
-            return left.second > right.second; // most frequent first
-        }
-        else {
-            return left.second < right.second; // least frequent first
-        }
-    }
-
-    // If the counts are tied, sort alphabetically by crime name
-    return getCrimeName(left.first, crimeIDMap) < getCrimeName(right.first, crimeIDMap);
-}
-
 // Combines two sorted halves
-void merge(vector<CrimeCount>& crimes, int left, int middle, int right,
-           const map<int, string>& crimeIDMap, bool descending) {
-    vector<CrimeCount> temp;
+void merge(vector<pair<int, int>>& data, int left, int middle, int right) {
+    vector<pair<int, int>> temp;
 
     int i = left;
     int j = middle + 1;
 
     while (i <= middle && j <= right) {
-        if (comesBefore(crimes[i], crimes[j], crimeIDMap, descending)) {
-            temp.push_back(crimes[i]);
+        // Sort by the second value, matching Heap Sort
+        if (data[i].second <= data[j].second) {
+            temp.push_back(data[i]);
             i++;
         }
         else {
-            temp.push_back(crimes[j]);
+            temp.push_back(data[j]);
             j++;
         }
     }
 
+    // Copy any remaining values from the left half
     while (i <= middle) {
-        temp.push_back(crimes[i]);
+        temp.push_back(data[i]);
         i++;
     }
 
+    // Copy any remaining values from the right half
     while (j <= right) {
-        temp.push_back(crimes[j]);
+        temp.push_back(data[j]);
         j++;
     }
 
+    // Copy the sorted values back into the original vector
     for (int k = 0; k < temp.size(); k++) {
-        crimes[left + k] = temp[k];
+        data[left + k] = temp[k];
     }
 }
 
-// Recursive merge sort function
-void mergeSortHelper(vector<CrimeCount>& crimes, int left, int right,
-                     const map<int, string>& crimeIDMap, bool descending) {
+// Divides the vector into smaller sections
+void mergeSortHelper(vector<pair<int, int>>& data, int left, int right) {
     if (left >= right) {
         return;
     }
 
     int middle = left + (right - left) / 2;
 
-    mergeSortHelper(crimes, left, middle, crimeIDMap, descending);
-    mergeSortHelper(crimes, middle + 1, right, crimeIDMap, descending);
-    merge(crimes, left, middle, right, crimeIDMap, descending);
+    mergeSortHelper(data, left, middle);
+    mergeSortHelper(data, middle + 1, right);
+
+    merge(data, left, middle, right);
 }
 
-void mergeSort(vector<CrimeCount>& crimes, const map<int, string>& crimeIDMap, bool descending) {
-    if (!crimes.empty()) {
-        mergeSortHelper(crimes, 0, crimes.size() - 1, crimeIDMap, descending);
+// Function called from main.cpp
+void mergeSort(vector<pair<int, int>>& data) {
+    if (!data.empty()) {
+        mergeSortHelper(data, 0, data.size() - 1);
     }
 }
+
 #endif //DSA_PROJECT2_CRIMESORTLA_MERGESORT_H

@@ -72,7 +72,7 @@ int SortAndMeasure(vector<pair<int,int>>& data, map<int, string> IDMap, bool hea
         heapSort(data);
     }
     else {
-        mergeSort(data,IDMap,false);
+        mergeSort(data);
     }
     auto t2 = std::chrono::system_clock::now();
     auto t3 = t2-t1;
