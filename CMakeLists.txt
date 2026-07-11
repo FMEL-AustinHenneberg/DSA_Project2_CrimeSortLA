@@ -7,4 +7,5 @@ add_executable(DSA_Project2_CrimeSortLA main.cpp Crime.h
         HeapSort.h
         HeapSort.h
         HeapSort.h
-        HeapSort.h)
+        HeapSort.h
+        MergeSort.h)
