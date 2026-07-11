@@ -66,7 +66,7 @@ bool VerifyAndReportSort(vector<pair<int,int>> hSort, vector<pair<int,int>> mSor
     cout << fastSort << " was " << faster << "% faster than" << slowSort << endl;
     return true;
 }
-int SortAndMeasure(vector<pair<int,int>>& data, map<int, string> IDMap, bool heap) {
+int SortAndMeasure(vector<pair<int,int>>& data, bool heap) {
     auto t1 = std::chrono::system_clock::now();
     if (heap) {
         heapSort(data);
@@ -171,10 +171,10 @@ int main() {
     vector<pair<int,int>> mergeCrime = LA.getCrimes();
 
     // Get sorting times for each sorting method and dataset
-    int heapAreaT = SortAndMeasure(heapAreas,areaIDMap,true);
-    int mergeAreaT = SortAndMeasure(mergeAreas,areaIDMap,true);
-    int heapCrimeT = SortAndMeasure(heapCrime,areaIDMap,true);
-    int mergeCrimeT = SortAndMeasure(mergeCrime,areaIDMap,true);
+    int heapAreaT = SortAndMeasure(heapAreas,true);
+    int mergeAreaT = SortAndMeasure(mergeAreas,true);
+    int heapCrimeT = SortAndMeasure(heapCrime,true);
+    int mergeCrimeT = SortAndMeasure(mergeCrime,true);
 
     //count by crime
     auto crimeCount = countByCrime(LA.getRecords());
