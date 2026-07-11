@@ -8,6 +8,7 @@
 #include <vector>
 using namespace std;
 class Crime {
+public:
     struct Record {
         int recordID;
         int areaID;

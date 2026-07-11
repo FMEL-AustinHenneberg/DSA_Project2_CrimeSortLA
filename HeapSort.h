@@ -7,7 +7,7 @@
 #include <vector>
 #include <utility>
 #include <unordered_map>
-#inlcude "Crime.h"
+#include "Crime.h"
 using namespace std;
 
 void heapifyDown(vector<pair<int,int>>& arr, int heapSize, int i) {
