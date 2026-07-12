@@ -1,6 +1,8 @@
 <H1> COP3530 - Project 2 </h1>
 This is the template for Project 2 repositories. It includes all the assignment instructions and documentation to help you use GitHub.
-
+Link to the dataset we used: https://catalog.data.gov/dataset/crime-data-from-2020-to-present
+The file needs to be downloaded and placed in the resources folder for this program to work properly.
+GitHub would not allow us to submit the .csv as it was over 100 MB.
 <h2> Table of Contents </h2>
 
 - [Documentation and resources on how to use GitHub for Project 2](#documentation-and-resources-on-how-to-use-github-for-project-3)
