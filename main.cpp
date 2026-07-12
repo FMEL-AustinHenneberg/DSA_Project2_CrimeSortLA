@@ -57,13 +57,13 @@ bool VerifyAndReportSort(vector<pair<int,int>> hSort, vector<pair<int,int>> mSor
 
     if (heapTime < mergeTime) {
         fastSort = "Heap Sort"; slowSort = "Merge Sort";
-        faster = mergeTime / heapTime;
+        faster = float(mergeTime) / float(heapTime);
     }
     else {
         fastSort = "Merge Sort"; slowSort = "Heap Sort";
-        faster = heapTime / mergeTime;
+        faster = float(heapTime) / float(mergeTime);
     }
-    cout << fastSort << " was " << faster << "% faster than" << slowSort << endl;
+    cout << fastSort << " was " << faster << "x faster than " << slowSort << endl;
     return true;
 }
 int SortAndMeasure(vector<pair<int,int>>& data, bool heap) {
@@ -83,6 +83,29 @@ void PrintOptions(map<int,string> options) {
         cout << it->second << endl;
     }
 }
+int ConvertToInt(string input) {
+    try {
+        int i  = stoi(input);
+        return i;
+    }
+    catch (...) {
+        return -1;
+    }
+}
+bool GetAndValidateCount(int& intCount, string areaOrCrime) {
+    string count = "";
+    cout << "How many " << areaOrCrime << " would you like to display?\t";
+    cin >> count;
+    intCount = ConvertToInt(count);
+    if (intCount == -1) {
+        cout << "Incorrect choice, try again." << endl;
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
 int main() {
     regex quote_re("\""); // regex quote
     // file spec variables
@@ -103,12 +126,12 @@ int main() {
     map<int,string> userOptions = {
         {1, "1. Find Most Frequent Crimes"},
         {2, "2. Find Least Frequent Crimes"},
-        {3, "3. Get all Crime counts in the LAPD Area"},
-        // {4, "4. Find top area for a crime"},
+        {3, "3. Get all Crime counts by Crime Category."},
         {4, "4. Find Areas with the most amount of crime."},
         {5, "5. Find Areas with the least amount of crime."},
-        {6, "6. Merge vs. Heap Sort"},
-        {7, "7. Exit"}
+        {6, "6. Get all Crime counts by Area."},
+        {7, "7. Merge vs. Heap Sort"},
+        {8, "8. Exit"}
     };
     // Welcome message
     cout << "Welcome to CrimeSort LA!" << endl;
@@ -159,8 +182,6 @@ int main() {
             }
         }
     }
-    string userChoice = "";
-    int intChoice = -1;
     cout << linesNum << " Records Loaded." << endl;
     cout << "Sorting data and measuring performance..." << flush;
 
@@ -172,11 +193,11 @@ int main() {
 
     // Get sorting times for each sorting method and dataset
     int heapAreaT = SortAndMeasure(heapAreas,true);
-    int mergeAreaT = SortAndMeasure(mergeAreas,true);
+    int mergeAreaT = SortAndMeasure(mergeAreas,false);
     int heapCrimeT = SortAndMeasure(heapCrime,true);
-    int mergeCrimeT = SortAndMeasure(mergeCrime,true);
+    int mergeCrimeT = SortAndMeasure(mergeCrime,false);
 
-    //count by crime
+    //count by crime and areas
     auto crimeCount = countByCrime(LA.getRecords());
     auto areaCount = countByArea(LA.getRecords());
 
@@ -185,102 +206,113 @@ int main() {
     heapSort(areaCount);
 
     cout << "Complete!" << endl;
+
+    //User input variables
+    string userChoiceMenu = "";
+    int intChoice = -1;
+    int intCount = -1;
     // get choice and determine if it is valid.
-    bool choiceValid = false;
+    bool choiceMenuValid = false;
+    bool choiceCountValid = false;
     bool exit = false;
     // user interaction screen
     do {
+        // print user options
         cout << "Please choose one of the following:" << endl << endl;
         PrintOptions(userOptions);
-        while (!choiceValid) {
+        //menu choice validation
+        while (!choiceMenuValid) {
             cout << endl << "Enter Choice: ";
-            cin >> userChoice;
-            try {
-                intChoice = stoi(userChoice);
-                if (userOptions.find(intChoice) != userOptions.end()) {
-                    choiceValid = true;
-                }
-                else {
-                    cout << "Incorrect choice, try again." << endl;
-                }
+            cin >> userChoiceMenu;
+            intChoice = ConvertToInt(userChoiceMenu);
+            if (userOptions.find(intChoice) != userOptions.end()) {
+                choiceMenuValid = true;
             }
-            catch (...) {
+            else {
                 cout << "Incorrect choice, try again." << endl;
             }
         }
         // Use choice to determine next step
         if (intChoice == 1) {
-            //get most frequent crimes
-            int freq = 0;
-            cout << "How many crimes would you like to display?\t";
-            cin >> freq;
-            cout << "Top " << freq << " most frequent Crimes:" << endl;
-            PrintMostOrLeast(crimeCount, crimeIDMap, true, freq);
-            cout << "Press any key and enter to return to menu." << endl;
-            cin >> userChoice;
+            while (!choiceCountValid) {
+                choiceCountValid = GetAndValidateCount(intCount,"crimes");
+            }
+            bool success = false;
+            while (!success) {
+                cout << "Top " << intCount << " most frequent Crimes:" << endl;
+                success = PrintMostOrLeast(crimeCount, crimeIDMap, true, intCount);
+                cout << "Press any key and enter to return to menu." << endl;
+                cin >> userChoiceMenu;
+            }
         }
+        //get least frequent crimes
         else if (intChoice == 2) {
-            //get least frequent crimes
-            int freq = 0;
-            cout << "How many crimes would you like to display?\t";
-            cin >> freq;
-            cout << "Top " << freq << " least frequent Crimes:" << endl;
-            PrintMostOrLeast(crimeCount, crimeIDMap, false, freq);
-            //reset input validation
-            choiceValid = false;
-            cout << "Press any key and enter to return to menu." << endl;
-            cin >> userChoice;
+            while (!choiceCountValid) {
+                choiceCountValid = GetAndValidateCount(intCount,"crimes");
+            }
+            bool success = false;
+            while (!success) {
+                success = PrintMostOrLeast(crimeCount, crimeIDMap, false, intCount);
+                cout << "Press any key and enter to return to menu." << endl;
+                cin >> userChoiceMenu;
+            }
         }
+        // print all crime counts
         else if (intChoice == 3) {
-            //get Crime counts
-            cout << "All crime counts:" << endl;
+            cout << "All crime counts by Crime Category:" << endl;
             PrintMostOrLeast(crimeCount, crimeIDMap, true, crimeCount.size());
-            //reset input validation
-            choiceValid = false;
             cout << "Press any key and enter to return to menu." << endl;
-            cin >> userChoice;
+            cin >> userChoiceMenu;
         }
+        // print areas with most crime
         else if (intChoice == 4) {
-            //print areas with most crime
-            int freq = 0;
-            cout << "How many areas would you like to display?\t";
-            cin >> freq;
-            cout << "Top " << freq << " Areas with the most amount of crime:" << endl;
-            PrintMostOrLeast(areaCount, areaIDMap, true, freq);
-            //reset input validation
-            choiceValid = false;
-            cout << "Press any key and enter to return to menu." << endl;
-            cin >> userChoice;
+            while (!choiceCountValid) {
+                choiceCountValid = GetAndValidateCount(intCount,"areas");
+            }
+            bool success = false;
+            while (!success) {
+                success = PrintMostOrLeast(areaCount, areaIDMap, true, intCount);
+                cout << "Press any key and enter to return to menu." << endl;
+                cin >> userChoiceMenu;
+            }
         }
+        //print areas with least crime
         else if (intChoice == 5) {
-            //print areas with least crime
-            int freq = 0;
-            cout << "How many areas would you like to display?\t";
-            cin >> freq;
-            cout << "Top " << freq << " Areas with the least amount of crime:" << endl;
-            PrintMostOrLeast(areaCount, areaIDMap, false, freq);
-            //reset input validation
-            choiceValid = false;
-            cout << "Press any key and enter to return to menu." << endl;
-            cin >> userChoice;
+            while (!choiceCountValid) {
+                choiceCountValid = GetAndValidateCount(intCount,"areas");
+            }
+            bool success = false;
+            while (!success) {
+                success = PrintMostOrLeast(areaCount, areaIDMap, false, intCount);
+                cout << "Press any key and enter to return to menu." << endl;
+                cin >> userChoiceMenu;
+            }
         }
         else if (intChoice == 6) {
+            //get Crime counts
+            cout << "All crime counts by Area:" << endl;
+            PrintMostOrLeast(areaCount, areaIDMap, true, areaCount.size());
+            cout << "Press any key and enter to return to menu." << endl;
+            cin >> userChoiceMenu;
+        }
+        else if (intChoice == 7) {
             // Test and Verify Merge vs Heap Sort
             cout << "Area Data:" <<endl;
             cout << "Validating sort methods..." << endl;
             VerifyAndReportSort(heapAreas,mergeAreas, heapAreaT, mergeAreaT);
             cout << endl << "Crime Data:" <<endl;
             cout << "Validating sort methods..." << endl;
-            VerifyAndReportSort(heapCrime, mergeCrime, heapCrimeT, mergeAreaT);
-            //reset input validation
-            choiceValid = false;
+            VerifyAndReportSort(heapCrime, mergeCrime, heapCrimeT, mergeCrimeT);
             cout << "Press any key and enter to return to menu." << endl;
-            cin >> userChoice;
+            cin >> userChoiceMenu;
         }
-        else if (intChoice == 7) {
+        else if (intChoice == 8) {
             cout << "Exiting application. Have a good one!" << endl;
             exit = true;
         }
+        //reset input validation
+        choiceMenuValid = false;
+        choiceCountValid = false;
     }
     while (!exit);
     return 0;
